@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+
+var sim = require('../android-sim');
+var $ = require('shelljs');
+
+var argv = require('minimist')(process.argv.slice(2));
+
+var spawn = require('child_process').spawn;
+var fs = require('fs');
+
+
+if (argv._.length>1) {
+    switch(argv._[0]) {
+	case 'entry':
+	    var badging = sim.apk_badging(argv._[1]);
+	    if (badging) {
+		    var packageName = badging.package.name;
+		    var activityName = badging['launchable-activity'].name;
+		    $.echo(packageName + '/' + activityName);
+	    } else {
+	    	$.echo('Sorry, I have no idea!')
+	    }
+	    break;
+	case 'start':
+		sim.start_apk(argv._[1]);
+		break;
+	default:
+	    help();
+    }
+} else {
+	help();
+}
+
+
+function help() {
+    $.echo('Usage: android-sim start <apkfile>');
+}
+
