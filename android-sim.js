@@ -47,7 +47,6 @@ if (!env.SDK) {
 	// do something here.
 }
 
-
 // detect android SDK path, return true if found.
 function detect_sdk(p) {
 	p = path.join(p, 'tools');
@@ -84,6 +83,7 @@ function detect_sdk(p) {
 				env.aapt = _.max(got, function(v){return v.version;}).path;
 			}
 		}
+
 		return true;
 	}
 	return false;
@@ -259,17 +259,27 @@ module.exports.start_apk = function(path, option) {
 module.exports.apk_badging = function(path, option) {
 	if (!check_cmd('aapt')) return false;
 	var $result = $.exec(env.aapt + ' dump badging ' + path);
-	if ($result.code == 0) {
+	if ($result.code === 0) {
 		return parser.parse($result.output);
 	}
 	return undefined;
+}
+
+// signing apk
+module.exports.sign = function(apk, keystore, pass, alias) {
+	var cmd = 'echo ' + pass + '| jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore '+keystore+' '+apk+' '+alias+' -sigfile CERT';
+	if ($.exec(cmd).code !== 0) {
+		error('Sign failed, something wrong with `jarsigner`');
+		return false;
+	}
+	return true;
 }
 
 // zipalign the apk file
 module.exports.zipalign = function(path, output) {
 	if (!check_cmd('zipalign')) return false;
 	var $result = $.exec(env.zipalign + ' -f 4 ' + path +' ', + outpath);
-	if ($result.code == 0) return true;
+	if ($result.code === 0) return true;
 	else return false;
 };	
 
