@@ -37,7 +37,7 @@ var env = {};
 
 
 // detect Android SDK environment..
-_.some($.env['PATH'].split(':'), function(p){
+_.some($.env['PATH'].split(path.delimiter), function(p){
 	detect_sdk(path.join(p, '..'));
 });
 
@@ -163,8 +163,8 @@ module.exports.start_emulator = function(callback, option) {
 	}
 
 	function do_start(avd) {
-		var out = fs.openSync('./out.log', 'a');
-		var err = fs.openSync('./out.log', 'a');
+		var out = fs.openSync('out.log', 'a');
+		var err = fs.openSync('out.log', 'a');
 		var emulator = spawn(env.emulator, ['-avd', avd], {detached:true, stdio: [ 'ignore', out, err ]});
 		emulator.unref();
 		info('Starting emulator('+ avd.grey +')..');
