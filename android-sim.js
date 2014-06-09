@@ -232,7 +232,12 @@ module.exports.start_apk = function(path, option) {
 		do_start(devices[0]);
 	}
 	function do_start(device) {
-		var installed = self.install_apk(path, {device:device});
+		var installed = false; 
+		if (option.install) {
+			installed = self.install_apk(path, {device:device});
+		} else {
+			installed = true;
+		}
 		if (installed) {
 			var entry = get_entry.call(self, path);
 			var run_cmd = env.adb + ' -s ' + device + ' shell am start -n ' + entry;
