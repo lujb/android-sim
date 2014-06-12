@@ -56,18 +56,19 @@ function detect_sdk(p) {
 		var emulator = path.join(p, 'emulator');
 		var zipalign = path.join(p, 'zipalign');
 		var adb = path.resolve(path.join(p, '..', 'platform-tools', 'adb'));
+		var aapt = path.resolve(path.join(p, '..', 'platform-tools', 'aapt'));
 		var build_tools = path.resolve(path.join(p, '..', 'build-tools'));
 
 		env.SDK = path.resolve(path.join(p, '..'));
 		env.android = android;
-		_.each([emulator, zipalign, adb], function(p){
+		_.each([emulator, zipalign, adb, aapt], function(p){
 			if (fs.existsSync(p)) {
 				env[path.basename(p)] = p;
 			}
 		});
 
 		// detect aapt path
-		if (fs.existsSync(build_tools)) {
+		if (!env.aapt && fs.existsSync(build_tools)) {
 			var got = _.map(fs.readdirSync(build_tools), function(p){
 					var got = p.match(/\d+\.?\d*/g);
 					var aapt = path.join(build_tools, p, 'aapt');
